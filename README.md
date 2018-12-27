@@ -4,11 +4,10 @@
 
 ## install
 
-requires pgcrypto; when pgtap, unit-tests will also be run.
+requires pgcrypto; if pgtap installed, it unit-tests
 ```
 psql -f index.sql
 ```
-if pgtap installed, it unit-tests
 
 ## expression as key
 
