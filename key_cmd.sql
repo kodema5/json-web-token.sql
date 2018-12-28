@@ -8,22 +8,25 @@ create or replace function to_jwt (
     payload jsonb,
     cmd jwt.command_string_t
         default 'select current_setting(''jwt.key'', true)'::jwt.command_string_t,
+    header jsonb default '{}'::jsonb,
     alg text
         default coalesce(current_setting('jwt.algorithm',true), 'HS256')
+
 ) returns jwt.token_t as $$
 declare
+    h jsonb = jsonb_build_object('alg', alg, 'typ', 'JWT') || header;
     k text;
 begin
     if payload is null then
         return null;
     end if;
 
-    execute cmd into k using payload;
+    execute cmd into k using payload, h;
     if k is null then
         return null;
     end if;
 
-    return to_jwt(payload, k, alg);
+    return to_jwt(payload, k, header, alg);
 end;
 $$ language plpgsql immutable;
 
@@ -42,7 +45,7 @@ declare
     p jsonb = jwt.from_utf8(r[2]);
     k text;
 begin
-    execute cmd into k using p;
+    execute cmd into k using p, h;
     if k is null then
         return null;
     end if;

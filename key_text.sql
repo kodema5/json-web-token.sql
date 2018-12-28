@@ -2,10 +2,11 @@
 create or replace function to_jwt (
     payload jsonb,
     key text,
+    header jsonb default '{}'::jsonb,
     alg text default coalesce(current_setting('jwt.algorithm',true), 'HS256')
 ) returns jwt.token_t as $$
 declare
-    h jsonb = json_build_object('alg', alg, 'typ', 'JWT');
+    h jsonb = jsonb_build_object('alg', alg, 'typ', 'JWT') || header;
     t text = jwt.to_utf8(h)
         || '.'
         || jwt.to_utf8(payload);

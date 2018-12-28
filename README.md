@@ -4,7 +4,7 @@
 
 ## install
 
-requires pgcrypto; if pgtap installed, it unit-tests
+requires pgcrypto; if pgtap is installed, it unit-tests
 ```
 psql -f index.sql
 ```
@@ -12,10 +12,10 @@ psql -f index.sql
 ## expression as key
 
 because a static key can be potentially dangerous,
-when command_string_t will be executed with payload ($1) for secret-key text
+when command_string_t will be executed with payload ($1) and header ($2) for secret-key text
 
 ```
-to_jwt(payload jsonb, cmd command_string_t)
+to_jwt(payload jsonb, cmd command_string_t, header jsonb = {})
 from_jwt(token_t, cmd command_string_t)
 ```
 
@@ -44,7 +44,7 @@ dev=# select from_jwt(
 supposed key is produced by other mean, ex: a constant / variable
 
 ```
-to_jwt(payload jsonb, key text)
+to_jwt(payload jsonb, key text, header jsonb = {})
 from_jwt(token_t, key text)
 ```
 example
