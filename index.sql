@@ -10,16 +10,16 @@ create extension if not exists pgcrypto;
 drop schema if exists jwt cascade;
 create schema jwt;
 
-\i base64.sql
-\i utf8.sql
-\i hash.sql
+\ir base64.sql
+\ir utf8.sql
+\ir hash.sql
 
 -- jwt is a text
 create domain jwt.token_t as text;
 
-\i key_text.sql
-\i key_cmd.sql
+\ir key_text.sql
+\ir key_cmd.sql
 
-\i test.sql
+\ir test.sql
 
 \endif

@@ -2,10 +2,10 @@ select exists (select 1 from pg_available_extensions where name='pgtap') as has_
 \gset
 \if :has_pgtap
 
-\i test_key_cmd.sql
-\i test_key_text.sql
-\i test_nulls.sql
-\i test_token.sql
+\ir test_key_cmd.sql
+\ir test_key_text.sql
+\ir test_nulls.sql
+\ir test_token.sql
 
 SELECT * FROM public.runtests('jwt'::name);
 
