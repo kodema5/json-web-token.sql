@@ -1,4 +1,4 @@
-# docker build -t pgsql-dev .
+# docker build -t pgsql-dev -f pgsql-dev.dockerfile .
 # docker run --rm -it -p 5432:5432 --name pgsql-dev -v ${pwd}:/work pgsql-dev
 # psql -d dev -U dev (pwd=rei)
 
