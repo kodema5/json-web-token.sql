@@ -17,9 +17,9 @@ create schema jwt;
 -- jwt is a text
 create domain jwt.token_t as text;
 
-\ir key_text.sql
-\ir key_cmd.sql
+\ir jwt_w_text_key.sql
+\ir jwt_w_cmd_key.sql
 
-\ir test.sql
+\ir tests/index.sql
 
 \endif
