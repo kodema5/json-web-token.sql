@@ -1,8 +1,10 @@
 
 create function jwt.set_key (
     id_ text default md5(uuid_generate_v4()::text),
-    key_ text default md5(uuid_generate_v4()::text))
-returns jwt_.key
+    key_ text default md5(uuid_generate_v4()::text)
+)
+    returns jwt_.key
+    language sql
 as $$
     insert into jwt_.key (id, value)
         values (id_, key_)
@@ -10,24 +12,30 @@ as $$
     do update set
         value = key_
     returning *
-$$ language sql;
+$$;
 
 
 create function jwt.get_key (
-    id_ text)
-returns text
+    id_ text
+)
+    returns text
+    language sql
+    stable
 as $$
     select value
     from jwt_.key
     where id=id_
-$$ language sql stable;
+$$;
 
 
 create function jwt.decode (
     txt text,
     key_path jsonpath,
-    enc text default 'HS256')
-returns jsonb
+    enc text default 'HS256'
+)
+    returns jsonb
+    language sql
+    stable
 as $$
     with
     t1 as (
@@ -46,11 +54,14 @@ as $$
         else null
         end
     from t1, t2;
-$$ language sql stable;
+$$;
 
 
 \if :test
-    create function tests.test_jwt_w_stored_keys() returns setof text as $$
+    create function tests.test_jwt_w_stored_keys()
+        returns setof text
+        language plpgsql
+    as $$
     declare
         p jsonb = jsonb_build_object('test', 123);
         t text;
@@ -82,5 +93,5 @@ $$ language sql stable;
         return next ok(t is null, 'null jwt if key not found');
 
     end;
-    $$ language plpgsql;
+    $$;
 \endif
