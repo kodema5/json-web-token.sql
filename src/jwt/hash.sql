@@ -4,6 +4,7 @@ create function jwt.to_base64(
 )
     returns text
     language sql
+    security definer
     immutable
     strict
 as $$
@@ -19,6 +20,7 @@ create function jwt.from_base64(
 )
     returns bytea
     language sql
+    security definer
     immutable
     strict
 as $$
@@ -43,6 +45,7 @@ create function jwt.from_utf8(
 )
     returns jsonb
     language sql
+    security definer
     immutable
     strict
 as $$
@@ -69,6 +72,7 @@ create function jwt.hash(
 )
     returns text
     language sql
+    security definer
     immutable
 as $$
     with

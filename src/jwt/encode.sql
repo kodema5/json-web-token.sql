@@ -8,6 +8,7 @@ create function jwt.encode (
 )
     returns text
     language sql
+    security definer
     stable
 as $$
     with
@@ -27,38 +28,29 @@ as $$
 $$;
 
 
--- to get random keys
---
-create function jwt.get_random_key()
-    returns _jwt.key
-    language sql
-    stable
-as $$
-    select *
-    from _jwt.key
-    order by random()
-    limit 1
-$$;
-
--- jwt.encode with random key
+-- jwt.encode with stored key
 --
 create function jwt.encode (
     payload jsonb
 )
     returns text
-    language plpgsql
+    language sql
+    security definer
     stable
 as $$
-declare
-    k _jwt.key = jwt.get_random_key();
-begin
-    return jwt.encode(
+    with
+    k as ( -- get random key
+        select *
+        from _jwt.key
+        order by random()
+        limit 1
+    )
+    select jwt.encode (
         payload,
-        k.value,  -- key
-        jsonb_build_object( -- header
+        k.value, -- key
+        jsonb_build_object (
             'key_id', k.id
-        )
-    );
-end;
+        ))
+    from k
 $$;
 
