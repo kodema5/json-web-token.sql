@@ -52,21 +52,28 @@ create extension if not exists pgcrypto;
         a2 jsonb;
     begin
         insert into _jwt.key values
-            ('foo', 'foo'),  -- text-text
+            ('foo', '1234567'),  -- text-text
             ('bar', md5(uuid_generate_v4()::text)), -- text-random
             (md5(uuid_generate_v4()::text), md5(uuid_generate_v4()::text)); -- random-random
+
+        -- raise warning '----%',
+        --    (select jsonb_pretty(to_jsonb(array_agg(k))) from _jwt.key k);
 
         t = jwt.encode(p);
         a = jwt.decode(t);
         return next ok(a = p, 'able to use stored keys');
 
-        t = jwt.encode(p, now() - '1 min'::interval);
+        t = jwt.encode(p, id_ => 'fo%');
+        a = jwt.decode(t, '1234567');
+        return next ok(a = p, 'able to select key');
+
+        t = jwt.encode(p, now() - '1 hour'::interval);
         a = jwt.decode(t);
         return next ok(a is null, 'rejects expired token');
 
-        t = jwt.encode(p);
+        t = jwt.encode(p, id_=>'foo');
         a = jwt.decode(t);
-        t2 = jwt.renew(t);
+        t2 = jwt.renew(t, id_=>'bar');
         return next ok(t2 <> t, 'able to renew');
         a2 = jwt.decode(t2);
         return next ok(a = a2, 'renewed token has same payloads');

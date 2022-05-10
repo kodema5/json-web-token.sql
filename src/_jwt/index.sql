@@ -12,11 +12,10 @@ create table _jwt.key (
         primary key,
 
     value text
-        not null
+        not null,
 
-    -- for expiring key
-    -- until_tz
-    --     timestamp with time zone
-    --     default now() + '30 days'
+    created_tz timestamp with time zone
+        default now()
+
 );
 

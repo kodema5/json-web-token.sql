@@ -1,7 +1,16 @@
 -- renewing a valid token
 
 create function jwt.renew (
-    txt text
+    txt text,
+
+    -- expiration
+    exp_ timestamp with time zone
+        default (now() + '30 mins'::interval),
+
+    -- prefix for key selection
+    id_ text
+        default '%'
+
 )
     returns text
     language sql
@@ -14,7 +23,7 @@ as $$
     select case
         when t1.p is null
             then null
-        else jwt.encode(t1.p)
+        else jwt.encode(t1.p, exp_, id_)
         end
     from t1
 $$;

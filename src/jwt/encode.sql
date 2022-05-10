@@ -32,8 +32,14 @@ $$;
 --
 create function jwt.encode (
     payload jsonb,
+
+    -- expiration
     exp_ timestamp with time zone
-        default (now() + '30 mins'::interval)
+        default (now() + '30 mins'::interval),
+
+    -- prefix for key selection
+    id_ text
+        default '%'
 )
     returns text
     language sql
@@ -44,6 +50,7 @@ as $$
     k as ( -- get random key
         select *
         from _jwt.key
+        where id like id_
         order by random()
         limit 1
     )
