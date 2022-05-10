@@ -40,17 +40,6 @@ create extension if not exists pgcrypto;
     end;
     $$;
 
-    create or replace function tests.test_jwt_encode_invalid_token()
-        returns setof text
-        language plpgsql
-    as $$
-    begin
-        return next ok(jwt.decode('foo.bar.baz', 'xxx') is null, 'null when invalid-token');
-        return next ok(jwt.decode('foo', 'xxx') is null, 'null when invalid-token');
-    end;
-    $$;
-
-
     create function tests.test_jwt_w_stored_keys()
         returns setof text
         language plpgsql
@@ -59,6 +48,8 @@ create extension if not exists pgcrypto;
         p jsonb = jsonb_build_object('test', 123);
         t text;
         a jsonb;
+        t2 text;
+        a2 jsonb;
     begin
         insert into _jwt.key values
             ('foo', 'foo'),  -- text-text
@@ -68,6 +59,17 @@ create extension if not exists pgcrypto;
         t = jwt.encode(p);
         a = jwt.decode(t);
         return next ok(a = p, 'able to use stored keys');
+
+        t = jwt.encode(p, now() - '1 min'::interval);
+        a = jwt.decode(t);
+        return next ok(a is null, 'rejects expired token');
+
+        t = jwt.encode(p);
+        a = jwt.decode(t);
+        t2 = jwt.renew(t);
+        return next ok(t2 <> t, 'able to renew');
+        a2 = jwt.decode(t2);
+        return next ok(a = a2, 'renewed token has same payloads');
     end;
     $$;
 

@@ -36,11 +36,20 @@ as $$
     t1 as (
         select string_to_array(txt, '.') as a),
     t2 as (
-        select jwt.from_utf8(t1.a[1])->>'key_id' as id
-        from t1
+        select header->>'jti' as id,
+            now() > to_timestamp(
+                header->>'exp',
+                'YYYY-MM-DD"T"HH24:MI:SS"Z"'
+            )::timestamp at time zone 'UTC'
+            as is_expired
+        from (
+            select jwt.from_utf8(t1.a[1])
+            from t1
+        ) t3 (header)
     )
     select case
-        when t2.id is null then null
+        when t2.id is null or t2.is_expired
+            then null
         when jwt.hash (
             a[1] || '.' || a[2], -- header.payload
             (
@@ -55,3 +64,4 @@ as $$
         end
     from t1, t2
 $$;
+
