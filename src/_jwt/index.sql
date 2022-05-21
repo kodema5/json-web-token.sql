@@ -6,7 +6,7 @@ create schema if not exists _jwt;
 -- contains shared private keys
 -- ex: mi-jwt-key.v1
 --
-create table _jwt.key (
+create table if not exists _jwt.key (
     id text
         not null
         primary key,
