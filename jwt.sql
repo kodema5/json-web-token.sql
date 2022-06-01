@@ -80,4 +80,22 @@ create extension if not exists pgcrypto;
     end;
     $$;
 
+    create function tests.test_jwt_invalid_jwt()
+        returns setof text
+        language plpgsql
+    as $$
+    declare
+        a jsonb;
+    begin
+        a = jwt.decode(null);
+        return next ok(a is null, 'null for null jwt');
+        a = jwt.decode('{}');
+        return next ok(a is null, 'null for invalid jwt');
+
+        a = jwt.decode('..');
+        return next ok(a is null, 'null for invalid jwt');
+        a = jwt.decode('a.b.c');
+        return next ok(a is null, 'null for invalid jwt');
+    end;
+    $$;
 \endif
