@@ -32,8 +32,10 @@ as $$
             then
                 jwt.decode(substring(p.auth from 8))
 
+            -- assume jwt token
             else
-                null
+                jwt.decode(p.auth)
+
             end
             from p
         ))

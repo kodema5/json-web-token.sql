@@ -135,7 +135,15 @@ create extension if not exists pgcrypto;
                 'authorization', 'Bearer ' || (jwt.encode(p))::text
             )
         ));
+        return next ok(req->'_auth'->>'user_id' is not null, 'accepts jwt bearer');
+
+        req = jwt.auth(jsonb_build_object(
+            '_headers', jsonb_build_object(
+                'authorization', (jwt.encode(p))::text
+            )
+        ));
         return next ok(req->'_auth'->>'user_id' is not null, 'accepts jwt token');
+
     end;
     $$;
 
