@@ -5,4 +5,4 @@ create schema jwt;
 \ir encode.sql
 \ir decode.sql
 \ir renew.sql
-
+\ir auth.sql
