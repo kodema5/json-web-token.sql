@@ -14,8 +14,8 @@ create table if not exists _jwt.key (
     value text
         not null,
 
-    created_tz timestamp with time zone
-        default now()
+    until_tz timestamp with time zone
+        default (now() + '1 day'::interval)
 
 );
 

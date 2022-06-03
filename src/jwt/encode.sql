@@ -47,10 +47,11 @@ create function jwt.encode (
     stable
 as $$
     with
-    k as ( -- get random key
+    k as ( -- get random key prior to expiration time
         select *
         from _jwt.key
         where id like id_
+            and until_tz > exp_
         order by random()
         limit 1
     )
