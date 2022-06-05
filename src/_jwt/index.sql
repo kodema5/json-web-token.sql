@@ -1,5 +1,7 @@
+\if :test
 \if :local
     drop schema if exists _jwt cascade;
+\endif
 \endif
 create schema if not exists _jwt;
 
