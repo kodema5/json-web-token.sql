@@ -106,43 +106,43 @@ create extension if not exists pgcrypto;
     as $$
     declare
         p jsonb;
-        req jsonb;
+        a jsonb;
     begin
         p = jsonb_build_object('user_id', 'test');
 
-        req = jwt.auth(jsonb_build_object(
+        a = jwt.auth(jsonb_build_object(
             '_headers', jsonb_build_object(
                 'authorization', 'Test ' || p::text
             ),
             '_origin', '127.0.0.1'
         ));
-        return next ok(req->'_auth'->>'user_id' is not null, 'allows test-user from local');
+        return next ok(a->>'user_id' is not null, 'allows test-user from local');
 
-        req = jwt.auth(jsonb_build_object(
+        a = jwt.auth(jsonb_build_object(
             '_headers', jsonb_build_object(
                 'authorization', 'Test ' || p::text
             ),
             '_origin', '127.0.0.2'
         ));
-        return next ok(req->'_auth'->>'user_id' is null, 'disallow non-local test');
+        return next ok(a->>'user_id' is null, 'disallow non-local test');
 
 
         insert into _jwt.key values
             (md5(uuid_generate_v4()::text), md5(uuid_generate_v4()::text));
 
-        req = jwt.auth(jsonb_build_object(
+        a = jwt.auth(jsonb_build_object(
             '_headers', jsonb_build_object(
                 'authorization', 'Bearer ' || (jwt.encode(p))::text
             )
         ));
-        return next ok(req->'_auth'->>'user_id' is not null, 'accepts jwt bearer');
+        return next ok(a->>'user_id' is not null, 'accepts jwt bearer');
 
-        req = jwt.auth(jsonb_build_object(
+        a = jwt.auth(jsonb_build_object(
             '_headers', jsonb_build_object(
                 'authorization', (jwt.encode(p))::text
             )
         ));
-        return next ok(req->'_auth'->>'user_id' is not null, 'accepts jwt token');
+        return next ok(a->>'user_id' is not null, 'accepts jwt token');
 
     end;
     $$;
