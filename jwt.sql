@@ -1,3 +1,7 @@
+\if :{?jwt_sql}
+\else
+\set jwt_sql true
+
 create extension if not exists "uuid-ossp" schema public;
 create extension if not exists pgcrypto;
 
@@ -146,5 +150,7 @@ create extension if not exists pgcrypto;
 
     end;
     $$;
+
+\endif
 
 \endif
