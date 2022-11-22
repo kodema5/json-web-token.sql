@@ -1,3 +1,8 @@
+\if :{?jwt_hash_sql}
+\else
+\set jwt_hash_sql true
+
+create schema if not exists jwt;
 
 create function jwt.to_base64(
     a bytea
@@ -90,3 +95,5 @@ as $$
     select jwt.to_base64(t2.a)
     from t2
 $$;
+
+\endif

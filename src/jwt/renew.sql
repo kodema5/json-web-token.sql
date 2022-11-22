@@ -1,7 +1,12 @@
--- renewing a valid token
+\if :{?jwt_renew_sql}
+\else
+\set jwt_renew_sql true
 
+
+-- renewing a valid token
+--
 create function jwt.renew (
-    txt text,
+    jwt_text text,
 
     -- expiration
     exp_ timestamp with time zone
@@ -19,7 +24,7 @@ create function jwt.renew (
 as $$
     with
     t1 as (
-        select jwt.decode(txt) as p)
+        select jwt.decode(jwt_text) as p)
     select case
         when t1.p is null
             then null
@@ -28,3 +33,5 @@ as $$
     from t1
 $$;
 
+
+\endif
