@@ -1,3 +1,7 @@
-# jwt.sql
+# json-web-token.sql
 
-[json web token](https://jwt.io) (jwt)
+a pl/pgsql implementation of json-web-token with stored private-public keys
+
+ref:
+
+- [jwt.io](https://jwt.io)

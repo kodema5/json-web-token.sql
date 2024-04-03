@@ -1,1 +1,0 @@
-\ir src/jwt.sql
