@@ -1,0 +1,11 @@
+{
+    "tasks": {
+        "dev-start": "web-dev docker-start",
+
+        "dev-stop": "web-dev docker-stop",
+
+        "dev": "web-dev test tests/index.sql --watch",
+
+        "dump": "pg_dump -d web --no-comments --schema=jwt_ --schema=jwt --schema-only --no-owner -f dump.sql"
+    }
+}

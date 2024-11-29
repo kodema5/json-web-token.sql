@@ -1,5 +1,4 @@
--- holds key for jwt
---
+-- jwt keys
 create table if not exists jwt_key (
     public_key text
         not null
